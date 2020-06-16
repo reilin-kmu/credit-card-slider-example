@@ -44,12 +44,37 @@ class _HomePageState extends State<HomePage> {
   }
 
   _buildPage(int index) {
-    return Transform(
-      transform: Matrix4.identity()
-        ..setEntry(3, 2, 0.001)
-        ..rotateX(pi / 2),
-      alignment: Alignment.center,
-      child: CreditCard(index)
+    return AnimatedBuilder(
+      animation: _pageController,
+      builder: (context, child) {
+        double value = 1.0;
+
+        if (_pageController.position.haveDimensions) {
+          value = _pageController.page - index;
+          if (value >= 0) {
+            double _lowerLimit = 0;
+            double _upperLimit = pi / 2; // 90 degree
+            
+            value = (_upperLimit - (value.abs() * (_upperLimit - _lowerLimit))).clamp(_lowerLimit, _upperLimit);
+            value = _upperLimit - value;
+            value *= -1;
+          }
+        } else { // 超出範圍
+          if (index == 0) {
+            value = 0;
+          } else if (index == 1) {
+            value = -1;
+          }
+        }
+
+        return Transform(
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateX(value),
+          alignment: Alignment.center,
+          child: CreditCard(index),
+        );
+      },
     );
   }
 }
