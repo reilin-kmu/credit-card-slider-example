@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -43,7 +44,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   _buildPage(int index) {
-    return CreditCard(index);
+    return Transform(
+      transform: Matrix4.identity()
+        ..setEntry(3, 2, 0.001)
+        ..rotateX(pi / 2),
+      alignment: Alignment.center,
+      child: CreditCard(index)
+    );
   }
 }
 
