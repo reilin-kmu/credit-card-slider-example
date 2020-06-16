@@ -102,7 +102,7 @@ class CreditCard extends StatelessWidget {
       child: Container(
         child: Center(
           child: Text(
-            'Credit Card',
+            'Credit Card ' + (index + 1).toString(),
             style: TextStyle(
               color: Colors.white,
               fontSize: 20
