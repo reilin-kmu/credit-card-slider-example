@@ -1,3 +1,9 @@
+import 'package:credit_card_slider/card_background.dart';
+import 'package:credit_card_slider/card_company.dart';
+import 'package:credit_card_slider/card_network_type.dart';
+import 'package:credit_card_slider/credit_card_slider.dart';
+import 'package:credit_card_slider/credit_card_widget.dart';
+import 'package:credit_card_slider/validity.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -20,9 +26,53 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final PageController _pageController = PageController(
-    viewportFraction: 0.35
-  );
+  final PageController _pageController = PageController(viewportFraction: 0.35);
+  final List<CreditCard> _creditCards = [
+    CreditCard(
+      cardBackground: SolidColorCardBackground(Colors.red),
+      cardNetworkType: CardNetworkType.visaBasic,
+      cardHolderName: 'Kaohsiung Medical University',
+      cardNumber: '1234 5678 1234 5678',
+      company: CardCompany.hdfc,
+      validity: Validity(
+          validFromMonth: 1,
+          validFromYear: 16,
+          validThruMonth: 1,
+          validThruYear: 21),
+    ),
+    CreditCard(
+      cardBackground: GradientCardBackground(LinearGradient(
+          colors: [Color(0xFF4AA3F2), Color(0xFFAF92FB)],
+          stops: [0.3, 0.95],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight)),
+      cardNetworkType: CardNetworkType.visaBasic,
+      cardHolderName: 'Kaohsiung Medical University',
+      cardNumber: '1234 5678 1234 5678',
+      showChip: false,
+      company: CardCompany.citiBank,
+      validity: Validity(
+          validFromMonth: 1,
+          validFromYear: 16,
+          validThruMonth: 1,
+          validThruYear: 21),
+      numberColor: Colors.black,
+      validityColor: Colors.black,
+      cardHolderNameColor: Colors.black,
+    ),
+    CreditCard(
+      cardBackground: ImageCardBackground(AssetImage('assets/images/bg2.jpg')),
+      cardNetworkType: CardNetworkType.visaBasic,
+      cardHolderName: 'Kaohsiung Medical University',
+      cardNumber: '1234 5678 1234 5678',
+      company: CardCompany.hsbc,
+      validity: Validity(
+          validFromMonth: 1,
+          validFromYear: 16,
+          validThruMonth: 1,
+          validThruYear: 21),
+    )
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -31,87 +81,11 @@ class _HomePageState extends State<HomePage> {
         title: Text('Credit Card Slider Demo'),
       ),
       body: Center(
-        child: PageView.builder(
-          controller: _pageController,
-          scrollDirection: Axis.vertical,
-          itemCount: 5,
-          itemBuilder: (context, index) {
-            return _buildPage(index);
-          },
-        ),
-      ),
-    );
-  }
-
-  _buildPage(int index) {
-    return AnimatedBuilder(
-      animation: _pageController,
-      builder: (context, child) {
-        double value = 1.0;
-
-        if (_pageController.position.haveDimensions) {
-          value = _pageController.page - index;
-          if (value >= 0) {
-            double _lowerLimit = 0;
-            double _upperLimit = pi / 2; // 90 degree
-            
-            value = (_upperLimit - (value.abs() * (_upperLimit - _lowerLimit))).clamp(_lowerLimit, _upperLimit);
-            value = _upperLimit - value;
-            value *= -1;
-          }
-        } else { // 超出範圍
-          if (index == 0) {
-            value = 0;
-          } else if (index == 1) {
-            value = -1;
-          }
-        }
-
-        return Transform(
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.001)
-            ..rotateX(value),
-          alignment: Alignment.center,
-          child: CreditCard(index),
-        );
-      },
-    );
-  }
-}
-
-class CreditCard extends StatelessWidget {
-  final int index;
-
-  CreditCard(this.index);
-
-  _showCardBGColor(index) {
-    if (index % 2 == 0) {
-      return Colors.blueAccent;
-    }
-    return Colors.green;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      decoration: BoxDecoration(
-        color: _showCardBGColor(index)
-      ),
-      child: Container(
-        child: Center(
-          child: Text(
-            'Credit Card ' + (index + 1).toString(),
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20
-            ),
-          ),
+        child: CreditCardSlider(
+          _creditCards,
+          percentOfUpperCard: pi / 2,
         ),
       ),
     );
   }
 }
-
-
